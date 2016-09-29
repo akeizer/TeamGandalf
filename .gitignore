@@ -1,0 +1,7 @@
+# ignore test files
+*.out
+*.in
+
+
+# ignore binaries
+TeamGandalf
