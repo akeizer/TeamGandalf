@@ -1,7 +1,6 @@
 package imagetocsv
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"os"
@@ -12,7 +11,7 @@ import (
 	_ "image/png"
 )
 
-func readImage(filename string) image.Image {
+func ReadImage(filename string) image.Image {
 	fileReader, err := os.Open(filename)
 	if err != nil {
 		panic(err)
@@ -25,19 +24,19 @@ func readImage(filename string) image.Image {
 }
 
 // ignore alpha for now
-func colorToBrightness(c color.Color) int {
+func ColorToBrightness(c color.Color) int {
 	r, g, b, _ := c.RGBA()
 	return (int)((r + g + b) / 3)
 }
 
-func imageToCSV(filename string) string {
-	img := readImage(filename)
+func ConvertToCSV(filename string) string {
+	img := ReadImage(filename)
 	bounds := img.Bounds()
 	var vals []string
 
 	for i := bounds.Min.X; i <= bounds.Max.X; i++ {
 		for j := bounds.Min.Y; j <= bounds.Max.Y; j++ {
-			vals = append(vals, strconv.Itoa(colorToBrightness(img.At(i, j))))
+			vals = append(vals, strconv.Itoa(ColorToBrightness(img.At(i, j))))
 		}
 	}
 	return strings.Join(vals, ",")
