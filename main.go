@@ -17,8 +17,8 @@ func main() {
         os.Exit(1)
     }
 
-    var train = flag.Bool("train", false, "If we should use the inputs as training")
-    var help = flag.Bool("h", false, "Should we display the help information")
+    var train = flag.Bool("train", false, "Use the input files as training")
+    var help = flag.Bool("h", false, "Display the help information")
 
     flag.Parse()
 
