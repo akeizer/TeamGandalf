@@ -4,7 +4,8 @@ import (
     "os"
     "fmt"
     "flag"
-    "github.com/joshkergan/TeamGandalf/imagetocsv"
+    "./imagetocsv"
+    "./learning"
 )
 
 func helpText() {
@@ -30,17 +31,17 @@ func main() {
     outfilename := args[0]
 
     // open output file
-    var outfile os.File
     if !*train {
         outfile, err := os.Create(outfilename)
         if err != nil {
-            fmt.Println("Failed to create output file: ", err)
+            panic(fmt.Sprintf("Failed to create output file: %s ", err))
+        }
+        for _, arg := range args[1:] {
+            outfile.WriteString(imagetocsv.ConvertToCSV(arg))
         }
         defer outfile.Close()
     }
 
-    // write csvs
-    for _, arg := range args[1:] {
-        outfile.WriteString(imagetocsv.ConvertToCSV(arg))
-    }
+    data := learning.RetrieveData(outfilename)
+    fmt.Println(data)
 }
