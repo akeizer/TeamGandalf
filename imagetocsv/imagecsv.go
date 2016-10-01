@@ -11,7 +11,7 @@ import (
 	_ "image/png"
 )
 
-func ReadImage(filename string) image.Image {
+func readImage(filename string) image.Image {
 	fileReader, err := os.Open(filename)
 	if err != nil {
 		panic(err)
@@ -24,12 +24,12 @@ func ReadImage(filename string) image.Image {
 }
 
 // ignore alpha for now
-func ColorToBrightness(c color.Color) int {
+func colorToBrightness(c color.Color) int {
 	r, g, b, _ := c.RGBA()
 	return (int)((r + g + b) / 3)
 }
 
-func ConvertToCSV(filename string) string {
+func convertToCSV(filename string) string {
 	img := ReadImage(filename)
 	bounds := img.Bounds()
 	var vals []string
@@ -41,3 +41,33 @@ func ConvertToCSV(filename string) string {
 	}
 	return strings.Join(vals, ",")
 }
+
+func main() {
+    if (len(os.Args) < 2) {
+        helpText()
+        os.Exit(1)
+    }
+
+    var train = flag.Bool("train", false, "Use the input files as training")
+    var help = flag.Bool("h", false, "Display the help information")
+
+    flag.Parse()
+
+    if *help {
+        helpText()
+        os.Exit(1)
+    }
+    args := flag.Args()
+    outfilename := args[0]
+
+    // open output file
+    if !*train {
+        outfile, err := os.Create(outfilename)
+        if err != nil {
+            panic(fmt.Sprintf("Failed to create output file: %s ", err))
+        }
+        for _, arg := range args[1:] {
+            outfile.WriteString(imagetocsv.ConvertToCSV(arg))
+        }
+        defer outfile.Close()
+    }

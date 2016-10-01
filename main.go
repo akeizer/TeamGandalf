@@ -2,46 +2,46 @@ package main
 
 import (
     "os"
+    "os/exec"
     "fmt"
     "flag"
-    "./imagetocsv"
-    "./learning"
 )
 
 func helpText() {
     fmt.Printf("Usage: %s [flags] out_file in_file(s)\n", os.Args[0])
 }
 
+func buildImageConvert(output string, inputs []string) (*Cmd, error) {
+    path, err := exec.LookPath("imagecsv")
+    if err != nil {
+        return nil, err
+    }
+    return exec.Command(path, output, inputs)
+}
+
+func runImageConvert(imageConverter *Cmd) (error) {
+    return imageConverter.Run()
+}
+
+func buildMLExec(training bool, inputFile *File) (*Cmd, error) {
+    path, err := exec.LookPath("learning")
+    if err != nil {
+        return nil, err
+    }
+    return exec.Command(path, inputFile.Name())
+}
+
+func runML(machine *Cmd) (error) {
+    return machine.Run()
+}
+
 func main() {
-    if (len(os.Args) < 2) {
-        helpText()
-        os.Exit(1)
-    }
+    // Set up flags
+    train := flag.Bool("train", false, "Use the input files as training")
+    raw := flag.Bool("data", false, "If the input needs to be converted")
 
-    var train = flag.Bool("train", false, "Use the input files as training")
-    var help = flag.Bool("h", false, "Display the help information")
 
-    flag.Parse()
 
-    if *help {
-        helpText()
-        os.Exit(1)
-    }
-    args := flag.Args()
-    outfilename := args[0]
+    convertPath, err := exec.LookPath("imagetocsv")
 
-    // open output file
-    if !*train {
-        outfile, err := os.Create(outfilename)
-        if err != nil {
-            panic(fmt.Sprintf("Failed to create output file: %s ", err))
-        }
-        for _, arg := range args[1:] {
-            outfile.WriteString(imagetocsv.ConvertToCSV(arg))
-        }
-        defer outfile.Close()
-    }
-
-    data := learning.RetrieveData(outfilename)
-    fmt.Println(data)
 }
