@@ -40,8 +40,8 @@ func ConvertToCSV(filename string) string {
 		vals = append(vals, "notsquare")
 	}
 
-	for i := bounds.Min.X; i <= bounds.Max.X; i++ {
-		for j := bounds.Min.Y; j <= bounds.Max.Y; j++ {
+	for i := bounds.Min.X; i < bounds.Max.X; i++ {
+		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
 			vals = append(vals, strconv.Itoa(ColorToBrightness(img.At(i, j))))
 		}
 	}
