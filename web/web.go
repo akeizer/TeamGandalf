@@ -1,12 +1,22 @@
 package web
 
 import (
-	"fmt"
+	"html/template"
 	"net/http"
+	"fmt"
 )
 
+type Data struct {
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "<h1>TeamGandalf</h1><div><a>https://github.com/AKeizer/TeamGandalf</a> Testomg</div>")
+	t, err := template.ParseFiles("./web/main.html")
+	// d := Data{}
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	t.Execute(w, nil)
 }
 
 func Serve() {
