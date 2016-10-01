@@ -34,10 +34,27 @@ func ConvertToCSV(filename string) string {
 	bounds := img.Bounds()
 	var vals []string
 
+	if (strings.Contains(filename, "square")) {
+		vals = append(vals, "square")
+	} else {
+		vals = append(vals, "notsquare")
+	}
+
 	for i := bounds.Min.X; i <= bounds.Max.X; i++ {
 		for j := bounds.Min.Y; j <= bounds.Max.Y; j++ {
 			vals = append(vals, strconv.Itoa(ColorToBrightness(img.At(i, j))))
 		}
 	}
+
+	return strings.Join(vals, ",")
+}
+
+func CreateHeaderRow(pixelcount int) string {
+	var vals []string;
+	vals = append(vals, "label")
+	for i := 0; i < pixelcount; i++ {
+		vals = append(vals, "pixel" + strconv.Itoa(i))
+	}
+
 	return strings.Join(vals, ",")
 }
