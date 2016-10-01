@@ -14,7 +14,7 @@ func helpText() {
 }
 
 func main() {
-    totalpixels := 441
+    totalpixels := 400
 
     if (len(os.Args) < 2) {
         helpText()
