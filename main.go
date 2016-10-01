@@ -14,6 +14,8 @@ func helpText() {
 }
 
 func main() {
+    totalpixels := 441
+
     if (len(os.Args) < 2) {
         helpText()
         os.Exit(1)
@@ -37,8 +39,9 @@ func main() {
         if err != nil {
             panic(fmt.Sprintf("Failed to create output file: %s ", err))
         }
+        outfile.WriteString(imagetocsv.CreateHeaderRow(totalpixels) + "\n")
         for _, arg := range args[1:] {
-            outfile.WriteString(imagetocsv.ConvertToCSV(arg))
+            outfile.WriteString(imagetocsv.ConvertToCSV(arg) + "\n")
         }
         defer outfile.Close()
     }
