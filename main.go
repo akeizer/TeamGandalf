@@ -6,6 +6,7 @@ import (
     "flag"
     "./imagetocsv"
     "./learning"
+    "github.com/sjwhitworth/golearn/evaluation"
 )
 
 func helpText() {
@@ -42,6 +43,15 @@ func main() {
         defer outfile.Close()
     }
 
-    data := learning.RetrieveData(outfilename)
-    fmt.Println(data)
+    // want this code here so that it doesnt tell us that learning is unused
+    // but also don't want it to fail while we change how the CSV is formatted
+    if (false) {
+        train, test := learning.ReadTrainingTestData("trainingFile", "testFile")
+
+        c := learning.TrainAndClassifyData(train, test)
+
+        fmt.Println(evaluation.GetSummary(c))
+        fmt.Println(evaluation.GetAccuracy(c))
+    }
+
 }
