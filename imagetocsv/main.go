@@ -35,8 +35,8 @@ func imageToCSV(filename string) string {
 	bounds := img.Bounds()
 	var vals []string
 
-	for i := bounds.Min.X; i <= bounds.Max.X; i++ {
-		for j := bounds.Min.Y; j <= bounds.Max.Y; j++ {
+	for i := bounds.Min.X; i < bounds.Max.X; i++ {
+		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
 			vals = append(vals, strconv.Itoa(colorToBrightness(img.At(i, j))))
 		}
 	}
