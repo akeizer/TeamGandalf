@@ -15,6 +15,7 @@ func helpText() {
 
 func main() {
     totalpixels := 400
+
     var train = flag.Bool("train", false, "If we should use the inputs as training")
     var help = flag.Bool("h", false, "Should we display the help information")
     var isWeb = flag.Bool("web", false, "Setup webserver")
@@ -29,11 +30,11 @@ func main() {
         os.Exit(1)
     }
     args := flag.Args()
-    outfilename := args[0]
     if *isWeb {
       web.Serve()
     } else {
       // open output file
+      outfilename := args[0]
       if !*train {
           outfile, err := os.Create(outfilename)
           if err != nil {
