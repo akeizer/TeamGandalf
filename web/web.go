@@ -4,15 +4,40 @@ import (
 	"html/template"
 	"net/http"
 	"fmt"
+	"log"
+	"os"
+  "path"
 )
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("./web/main.html")
-	if err != nil {
-		fmt.Print(err)
+	lp := path.Join("web", "static", "templates", "layout.html")
+  fp := path.Join("web", "static", "templates", r.URL.Path)
+ 		log.Println(lp)
+		log.Println(fp)
+	// check for template existence
+	info, err := os.Stat(fp)
+  if err != nil {
+    if os.IsNotExist(err) {
+      http.NotFound(w, r)
+      return
+    }
+  }
+
+	// ensure request is not for a directory
+	if info.IsDir() {
+    http.NotFound(w, r)
+    return
+  }
+	tmpl, err := template.ParseFiles(lp, fp)
+ 	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(500), 500)
 		return
-	}
-	t.Execute(w, nil)
+ 	}
+	if err := tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
+    log.Println(err.Error())
+    http.Error(w, http.StatusText(500), 500)
+  }
 }
 
 func resultHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,5 +47,6 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 func Serve() {
   http.HandleFunc("/", viewHandler)
   http.HandleFunc("/showresults/", resultHandler)
+	log.Println("Listening...")
   http.ListenAndServe(":8080", nil)
 }
