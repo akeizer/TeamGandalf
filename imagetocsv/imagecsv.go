@@ -1,8 +1,6 @@
 package imagetocsv
 
 import (
-	"flag"
-	"fmt"
 	"image"
 	"image/color"
 	_ "image/gif"
@@ -13,26 +11,49 @@ import (
 	"strings"
 )
 
-func ReadImage(filename string) image.Image {
+func ConvertImageSet(outfilename string, inputFiles []string) error {
+	outfile, err := os.Create(outfilename)
+    if err != nil {
+        return err
+    }
+    defer outfile.Close()
+
+    totalpixels := 400
+
+    outfile.WriteString(createHeaderRow(totalpixels) + "\n")
+    for _, input := range inputFiles[:] {
+    	outString, err := convertToCSV(input)
+    	if err != nil {
+    		return err
+    	}
+        outfile.WriteString(outString + "\n")
+    }
+    return nil
+}
+
+func ReadImage(filename string) (image.Image, error) {
 	fileReader, err := os.Open(filename)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	img, _, err := image.Decode(fileReader)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return img
+	return img, nil
 }
 
 // ignore alpha for now
-func ColorToBrightness(c color.Color) int {
+func colorToBrightness(c color.Color) int {
 	r, g, b, _ := c.RGBA()
 	return (int)((r + g + b) / 3)
 }
 
-func ConvertToCSV(filename string) string {
-	img := ReadImage(filename)
+func convertToCSV(filename string) (string, error) {
+	img, err := ReadImage(filename)
+	if err != nil {
+		return "", err
+	}
 	bounds := img.Bounds()
 	var vals []string
 
@@ -44,14 +65,14 @@ func ConvertToCSV(filename string) string {
 
 	for i := bounds.Min.X; i < bounds.Max.X; i++ {
 		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
-			vals = append(vals, strconv.Itoa(ColorToBrightness(img.At(i, j))))
+			vals = append(vals, strconv.Itoa(colorToBrightness(img.At(i, j))))
 		}
 	}
 
-	return strings.Join(vals, ",")
+	return strings.Join(vals, ","), nil
 }
 
-func CreateHeaderRow(pixelcount int) string {
+func createHeaderRow(pixelcount int) string {
 	var vals []string
 	vals = append(vals, "label")
 	for i := 0; i < pixelcount; i++ {
@@ -61,31 +82,3 @@ func CreateHeaderRow(pixelcount int) string {
 	return strings.Join(vals, ",")
 }
 
-func main() {
-	if len(os.Args) < 2 {
-		os.Exit(1)
-	}
-
-	var train = flag.Bool("train", false, "Use the input files as training")
-	var help = flag.Bool("h", false, "Display the help information")
-
-	flag.Parse()
-
-	if *help {
-		os.Exit(1)
-	}
-	args := flag.Args()
-	outfilename := args[0]
-
-	// open output file
-	if !*train {
-		outfile, err := os.Create(outfilename)
-		if err != nil {
-			panic(fmt.Sprintf("Failed to create output file: %s ", err))
-		}
-		for _, arg := range args[1:] {
-			outfile.WriteString(ConvertToCSV(arg))
-		}
-		defer outfile.Close()
-	}
-}
