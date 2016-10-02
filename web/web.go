@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"log"
 	"os"
-  "path"
-	"github.com/AKeizer/TeamGandalf/imagegen"
-	"github.com/AKeizer/TeamGandalf/learning"
-	"github.com/AKeizer/TeamGandalf/imagetocsv"
+    "path"
+	"github.com/joshkergan/TeamGandalf/imagegen"
+	"github.com/joshkergan/TeamGandalf/learning"
+	"github.com/joshkergan/TeamGandalf/imagetocsv"
 	"github.com/satori/go.uuid"
 	"image/png"
 	"bytes"
@@ -18,7 +18,7 @@ import (
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	lp := path.Join("web", "static", "templates", "layout.html")
-  fp := path.Join("web", "static", "templates", r.URL.Path)
+    fp := path.Join("web", "static", "templates", r.URL.Path)
  		log.Println(lp)
 		log.Println(fp)
 	// check for template existence
@@ -58,13 +58,21 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Form)
 	shape := r.Form["shape"]
 	imageShape := shape[0]
-	imageFile := uuid.NewV4().String() + ".png"
+    baseFileName := uuid.NewV4().String()
+	imageFile := baseFileName + ".png"
 	imagegen.GenerateImage(imageShape, imageFile)
-	// results := learning.PerformAnalysis("training.csv", imageFile);
-	results := learning.AnalysisResult{"hey", 1.3}
+    // Convert to csv
+    imagecsv := baseFileName + ".csv"
+    err := imagetocsv.ConvertImageSet(imagecsv, imageFile)
+    if err != nil {
+        log.Fatalln("Could not convert image to csv")
+    }
+
+    results := learning.PerformAnalysis("training.csv", imagecsv);
+    //results := learning.AnalysisResult{"hey", 1.3}
 
 	lp := path.Join("web", "static", "templates", "layout.html")
-  fp := path.Join("web", "static", "templates", "results.html")
+    fp := path.Join("web", "static", "templates", "results.html")
 
 	img, err := imagetocsv.ReadImage(imageFile)
     if err != nil {

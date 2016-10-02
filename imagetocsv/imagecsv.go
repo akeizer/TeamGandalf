@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func ConvertImageSet(outfilename string, inputFiles []string) error {
+func ConvertImageSet(outfilename string, inputFiles ...string) error {
 	outfile, err := os.Create(outfilename)
     if err != nil {
         return err

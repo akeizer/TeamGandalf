@@ -3,9 +3,9 @@ package main
 import (
     "flag"
     "fmt"
-    "github.com/AKeizer/TeamGandalf/imagetocsv"
-    "github.com/AKeizer/TeamGandalf/learning"
-    "github.com/AKeizer/TeamGandalf/web"
+    "github.com/joshkergan/TeamGandalf/imagetocsv"
+    "github.com/joshkergan/TeamGandalf/learning"
+    "github.com/joshkergan/TeamGandalf/web"
     "os"
     "os/exec"
     "strings"
@@ -62,7 +62,7 @@ func main() {
       // open output file
       outfilename := args[0]
       if !*train {
-          err := imagetocsv.ConvertImageSet(outfilename, args[1:])
+          err := imagetocsv.ConvertImageSet(outfilename, args[1:]...)
         if err != nil {
             panic(fmt.Sprintf("Failed to create output file: %s ", err))
         }
