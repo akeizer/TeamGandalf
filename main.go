@@ -50,10 +50,6 @@ func main() {
         os.Exit(1)
     }
 
-    if len(os.Args) < 2 {
-        *help = true
-    }
-
     flag.Parse()
     if *help {
         helpText()
