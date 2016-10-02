@@ -7,9 +7,11 @@ Clone this repo into your Go work src repository.
 
 Add code to main and build off that.
 
-Dependency:
+Dependencies:
 
 https://github.com/sjwhitworth/golearn/wiki/Installation
+
+https://github.com/satori/go.uuid
 
 # Website
 
