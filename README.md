@@ -7,9 +7,24 @@ Clone this repo into your Go work src repository.
 
 Add code to main and build off that.
 
-Dependency:
+Dependencies:
 
 https://github.com/sjwhitworth/golearn/wiki/Installation
+
+https://github.com/satori/go.uuid
+
+# Building the project
+
+The following commands should get the source files and all the dependencies.
+There is an error about non-local imports that can be safely ignored.
+
+
+```sh
+go get github.com/AKeizer/TeamGandalf
+cd $GOPATH/src/github.com/AKeizer/TeamGandalf
+go get ./...
+go install -a main.go
+```
 
 # Website
 
