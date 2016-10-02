@@ -7,6 +7,11 @@ import (
     "github.com/sjwhitworth/golearn/knn"
 )
 
+type AnalysisResult struct {
+  Summary string
+  Accuracy float64
+}
+
 func RetrieveData(filename string) *base.DenseInstances {
   XORData, err := base.ParseCSVToInstances(filename, false)
   if err != nil  {
@@ -48,9 +53,8 @@ func ReadTrainingTestData(trainName string, testName string) (*base.DenseInstanc
 }
 
 func TrainAndClassifyData(train *base.DenseInstances, test *base.DenseInstances) map[string]map[string]int {
-    
     classifier := knn.NewKnnClassifier("euclidean", 1)
-	// note we can only optimize if the size of the data from test/ train have the 
+// note we can only optimize if the size of the data from test/ train have the
     // same dimensions
     classifier.AllowOptimisations = true
     classifier.Fit(train)
@@ -59,6 +63,12 @@ func TrainAndClassifyData(train *base.DenseInstances, test *base.DenseInstances)
     if err != nil {
         panic(err)
     }
-
     return c
+}
+
+func PerformAnalysis(trainFile string, testFile string) AnalysisResult{
+  train, test := ReadTrainingTestData(trainFile, testFile)
+  c := TrainAndClassifyData(train, test)
+  result := AnalysisResult{evaluation.GetSummary(c), evaluation.GetAccuracy(c)}
+  return result;
 }
