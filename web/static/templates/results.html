@@ -1,0 +1,13 @@
+{{define "body"}}
+<div>
+    <img src="data:image/png;base64,{{.Image}}">
+    <div>
+      <p>
+        Summary: <span>{{.Summary}}</span>
+      </p>
+      <p>
+        Accuracy: <span>{{.Accuracy}}</span>
+      </p>
+    </div>
+</div>
+{{end}}

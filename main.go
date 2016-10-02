@@ -5,7 +5,7 @@ import (
     "fmt"
     "github.com/joshkergan/TeamGandalf/imagetocsv"
     "github.com/joshkergan/TeamGandalf/learning"
-    "github.com/sjwhitworth/golearn/evaluation"
+    "github.com/joshkergan/TeamGandalf/web"
     "os"
     "os/exec"
     "strings"
@@ -42,36 +42,42 @@ func runML(machine *exec.Cmd) error {
 func main() {
     // Set up flags
     train := flag.Bool("train", false, "Use the input files as training")
-    raw := flag.Bool("data", false, "If the input needs to be converted")
     help := flag.Bool("h", false, "Print help text")
-    flag.Parse()
+    isWeb := flag.Bool("web", false, "Setup webserver")
+
+    if len(os.Args) < 2 && !*isWeb {
+        helpText()
+        os.Exit(1)
+    }
 
     if len(os.Args) < 2 {
         *help = true
     }
 
+    flag.Parse()
     if *help {
         helpText()
         os.Exit(1)
     }
     args := flag.Args()
-    outfilename := args[0]
-
-    // open output file
-    if !*raw {
-        err := imagetocsv.ConvertImageSet(outfilename, args[1:])
+    if *isWeb {
+      web.Serve()
+    } else {
+      // open output file
+      outfilename := args[0]
+      if !*train {
+          err := imagetocsv.ConvertImageSet(outfilename, args[1:])
         if err != nil {
             panic(fmt.Sprintf("Failed to create output file: %s ", err))
         }
-    }
-    // want this code here so that it doesnt tell us that learning is unused
-    // but also don't want it to fail while we change how the CSV is formatted
-    if !*train {
-        train, test := learning.ReadTrainingTestData("trainingFile", "testFile")
+      }
 
-        c := learning.TrainAndClassifyData(train, test)
-
-        fmt.Println(evaluation.GetSummary(c))
-        fmt.Println(evaluation.GetAccuracy(c))
+      // want this code here so that it doesnt tell us that learning is unused
+      // but also don't want it to fail while we change how the CSV is formatted
+      if (false) {
+          results := learning.PerformAnalysis("trainingFile", "testFile");
+          fmt.Printf("Summary: %s", results.Summary)
+          fmt.Printf("Accuracy: %e", results.Accuracy)
+      }
     }
 }

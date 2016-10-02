@@ -52,8 +52,7 @@ func GenerateImage(shape string, filename string) {
 		"-strokewidth", "1",
 		"-fill", "black",
 		"-draw", draw,
-		filename
-	).Output()
+		filename).Output()
 
 	if err != nil {
         panic(fmt.Sprintf("Failed to create images: %s ", err))
