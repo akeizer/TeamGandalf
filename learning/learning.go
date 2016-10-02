@@ -66,8 +66,8 @@ func TrainAndClassifyData(train *base.DenseInstances, test *base.DenseInstances)
     return c
 }
 
-func PerformAnalysis() AnalysisResult{
-  train, test := ReadTrainingTestData("trainingFile", "testFile")
+func PerformAnalysis(trainFile string, testFile string) AnalysisResult{
+  train, test := ReadTrainingTestData(trainFile, testFile)
   c := TrainAndClassifyData(train, test)
   result := AnalysisResult{evaluation.GetSummary(c), evaluation.GetAccuracy(c)}
   return result;

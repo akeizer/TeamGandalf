@@ -50,7 +50,7 @@ func main() {
       // want this code here so that it doesnt tell us that learning is unused
       // but also don't want it to fail while we change how the CSV is formatted
       if (false) {
-          results := learning.PerformAnalysis();
+          results := learning.PerformAnalysis("trainingFile", "testFile");
           fmt.Printf("Summary: %s", results.Summary)
           fmt.Printf("Accuracy: %e", results.Accuracy)
       }

@@ -1,9 +1,10 @@
 {{define "body"}}
 <div>
-  <form>
+  <form action="/showresults/" method="POST" class="main-form">
     <input type="radio" name="shape" value="square"> Square <br>
     <input type="radio" name="shape" value="circle"> Circle <br>
     <input type="radio" name="shape" value="triangle"> Triangle <br>
+    <input type="submit" value="Submit" class="submitter hidden">
   </form>
   <button class="btn btn-primary submission" >Generate Image and Run Machine Learner</button>
 </div>

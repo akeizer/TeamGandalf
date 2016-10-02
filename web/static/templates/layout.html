@@ -14,7 +14,11 @@
     $(function(){
         $('.submission').click(function(){
           var selectedShape = $('input[name=shape]:checked').val();
-          $('.loading-indicator').removeClass('hidden');
+          if (selectedShape) {
+            $('.loading-indicator').removeClass('hidden');
+            $('.main-form').addClass('hidden');
+            $('.submitter').trigger('click');
+          }
         })
     });
   </script>

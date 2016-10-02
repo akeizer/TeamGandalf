@@ -3,10 +3,17 @@ package web
 import (
 	"html/template"
 	"net/http"
-	"fmt"
 	"log"
 	"os"
   "path"
+	"../imagegen"
+	"../learning"
+	"../imagetocsv"
+	"github.com/satori/go.uuid"
+	"image/png"
+	"bytes"
+	"encoding/base64"
+	"strconv"
 )
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,8 +47,43 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
   }
 }
 
+type EndResult struct {
+	Image string
+	Summary string
+	Accuracy string
+}
+
 func resultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Recieved input")
+	r.ParseForm()
+	log.Println(r.Form)
+	shape := r.Form["shape"]
+	imageShape := shape[0]
+	imageFile := uuid.NewV4().String() + ".png"
+	imagegen.GenerateImage(imageShape, imageFile)
+	// results := learning.PerformAnalysis("training.csv", imageFile);
+	results := learning.AnalysisResult{"hey", 1.3}
+
+	lp := path.Join("web", "static", "templates", "layout.html")
+  fp := path.Join("web", "static", "templates", "results.html")
+
+	img := imagetocsv.ReadImage(imageFile)
+	buffer := new(bytes.Buffer)
+	if err := png.Encode(buffer, img); err != nil {
+		log.Fatalln("unable to encode image.")
+	}
+	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
+	if tmpl, err := template.ParseFiles(lp, fp); err != nil {
+		log.Println("unable to parse image template.")
+	} else {
+		// data := map[string]interface{}{"Image": str, "Summary" results.Summary, "Accuracy", results.Accuracy}
+		data := EndResult{str, results.Summary, strconv.FormatFloat(results.Accuracy, 'e', -1, 64)}
+		log.Println(data.Summary)
+		log.Println(data.Image)
+		if err = tmpl.ExecuteTemplate(w, "layout", data); err != nil {
+			log.Println(err.Error())
+			log.Println("unable to execute template.")
+		}
+	}
 }
 
 func Serve() {
