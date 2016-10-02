@@ -2,6 +2,8 @@
 *.out
 *.in
 
+# ignore image files
+*.png
 
 # ignore binaries
 TeamGandalf
