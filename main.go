@@ -3,9 +3,9 @@ package main
 import (
     "flag"
     "fmt"
-    "github.com/joshkergan/TeamGandalf/imagetocsv"
-    "github.com/joshkergan/TeamGandalf/learning"
-    "github.com/joshkergan/TeamGandalf/web"
+    "github.com/AKeizer/TeamGandalf/imagetocsv"
+    "github.com/AKeizer/TeamGandalf/learning"
+    "github.com/AKeizer/TeamGandalf/web"
     "os"
     "os/exec"
     "strings"
