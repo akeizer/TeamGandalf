@@ -1,13 +1,16 @@
+#!/bin/bash
 # Script for generating training / test images
 # Uses ImageMagick (convert)
 
+# either first argument or 10
+imagecount=${1:-10}
 # generally want small images for not-high input dimensionality
 isize=20
 isizestr=20x20
 
 for shape in triangle square circle
 do
-	for i in {1..10}
+	for i in `seq 1 $imagecount`
 	do
 		# square of some size
 		let "size = 4 + $RANDOM % 12"
