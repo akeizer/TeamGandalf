@@ -72,10 +72,14 @@ func main() {
       } else if *shouldRun {
         imageShape := args[0]
         baseFileName := uuid.NewV4().String()
+        if imageShape == "square" {
+          baseFileName = "square-" + baseFileName
+        }
       	imageFile := baseFileName + ".png"
       	imagegen.GenerateImage(imageShape, imageFile)
         // Convert to csv
         imagecsv := baseFileName + ".csv"
+        fmt.Printf("Image file: " + imagecsv)
         err := imagetocsv.ConvertImageSet(imagecsv, imageFile)
         if err != nil {
             fmt.Printf("Could not convert image to csv")

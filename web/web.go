@@ -59,6 +59,9 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	shape := r.Form["shape"]
 	imageShape := shape[0]
   baseFileName := uuid.NewV4().String()
+	if imageShape == "square" {
+		baseFileName = "square-" + baseFileName
+	}
 	imageFile := baseFileName + ".png"
 	imagegen.GenerateImage(imageShape, imageFile)
   // Convert to csv
