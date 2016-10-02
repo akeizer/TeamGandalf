@@ -58,26 +58,30 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Form)
 	shape := r.Form["shape"]
 	imageShape := shape[0]
-    baseFileName := uuid.NewV4().String()
+  baseFileName := uuid.NewV4().String()
+	if imageShape == "square" {
+		baseFileName = "square-" + baseFileName
+	}
 	imageFile := baseFileName + ".png"
 	imagegen.GenerateImage(imageShape, imageFile)
-    // Convert to csv
-    imagecsv := baseFileName + ".csv"
-    err := imagetocsv.ConvertImageSet(imagecsv, imageFile)
-    if err != nil {
-        log.Fatalln("Could not convert image to csv")
-    }
+  // Convert to csv
+  imagecsv := baseFileName + ".csv"
+  err := imagetocsv.ConvertImageSet(imagecsv, imageFile)
+  if err != nil {
+      log.Fatalln("Could not convert image to csv")
+  }
 
-    results := learning.PerformAnalysis("training.csv", imagecsv);
-    //results := learning.AnalysisResult{"hey", 1.3}
+  results := learning.PerformAnalysis("training.csv", imagecsv);
+	log.Println(results.Summary)
+  //results := learning.AnalysisResult{"hey", 1.3}
 
 	lp := path.Join("web", "static", "templates", "layout.html")
-    fp := path.Join("web", "static", "templates", "results.html")
+  fp := path.Join("web", "static", "templates", "results.html")
 
 	img, err := imagetocsv.ReadImage(imageFile)
-    if err != nil {
-        log.Fatalln("unable to read image.")
-    }
+  if err != nil {
+      log.Fatalln("unable to read image.")
+  }
 	buffer := new(bytes.Buffer)
 	if err := png.Encode(buffer, img); err != nil {
 		log.Fatalln("unable to encode image.")
