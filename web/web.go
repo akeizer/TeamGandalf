@@ -1,19 +1,20 @@
 package web
 
 import (
-	"html/template"
-	"net/http"
-	"log"
-	"os"
+    "../imagegen"
+    "../imagetocsv"
+    "../learning"
+    "bytes"
+    "encoding/base64"
+    "fmt"
+    "github.com/satori/go.uuid"
+    "image/png"
+    "log"
+    "net/http"
+    "os"
+    "html/template"
     "path"
-	"../imagegen"
-	"../learning"
-	"../imagetocsv"
-	"github.com/satori/go.uuid"
-	"image/png"
-	"bytes"
-	"encoding/base64"
-	"strconv"
+    "strings"
 )
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -49,8 +50,24 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 type EndResult struct {
 	Image string
-	Summary string
+	Headers []string
+    Data [][]string
 	Accuracy string
+}
+
+func parseResultsTable(inTable string) ([]string, [][]string) {
+    tableArr := strings.Split(inTable, "\n")
+    tableHeaders := strings.Split(tableArr[0], "\t")
+    var tableData [][]string
+    for _, tableRow := range tableArr[2:len(tableArr)-2] {
+        semiSplit := strings.Split(tableRow, "\t\t")
+        var tableRowSplit []string
+        for _, splitString := range semiSplit {
+            tableRowSplit = append(tableRowSplit, strings.Split(splitString, "\t")...)
+        }
+        tableData = append(tableData, tableRowSplit)
+    }
+    return tableHeaders, tableData
 }
 
 func resultHandler(w http.ResponseWriter, r *http.Request) {
@@ -88,15 +105,16 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
 	if tmpl, err := template.ParseFiles(lp, fp); err != nil {
+        log.Println(err.Error())
 		log.Println("unable to parse image template.")
 	} else {
-		// data := map[string]interface{}{"Image": str, "Summary" results.Summary, "Accuracy", results.Accuracy}
-		data := EndResult{str, results.Summary, strconv.FormatFloat(results.Accuracy, 'e', -1, 64)}
-		log.Println(data.Summary)
-		log.Println(data.Image)
+        headers, tableData := parseResultsTable(results.Summary)
+		data := EndResult{str, headers, tableData, fmt.Sprintf("%.2f", results.Accuracy * 100)}
+
+		log.Println("\n", results.Summary)
 		if err = tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 			log.Println(err.Error())
-			log.Println("unable to execute template.")
+			log.Println("unable to execute body template.")
 		}
 	}
 }
