@@ -1,7 +1,8 @@
 package web
 
 import (
-	"html/template"
+	"fmt"
+    "html/template"
 	"net/http"
 	"log"
 	"os"
@@ -13,7 +14,6 @@ import (
 	"image/png"
 	"bytes"
 	"encoding/base64"
-	"strconv"
 )
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,13 +84,15 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
 	if tmpl, err := template.ParseFiles(lp, fp); err != nil {
+        log.Println(err.Error())
 		log.Println("unable to parse image template.")
 	} else {
 		// data := map[string]interface{}{"Image": str, "Summary" results.Summary, "Accuracy", results.Accuracy}
-		data := EndResult{str, results.Summary, strconv.FormatFloat(results.Accuracy, 'e', -1, 64)}
+		data := EndResult{str, results.Summary, fmt.Sprintf("%.2f", results.Accuracy * 100)}
+
 		log.Println(data.Summary)
 		log.Println(data.Image)
-		if err = tmpl.ExecuteTemplate(w, "layout", data); err != nil {
+		if err = tmpl.ExecuteTemplate(w, "body", data); err != nil {
 			log.Println(err.Error())
 			log.Println("unable to execute template.")
 		}
