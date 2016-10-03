@@ -90,11 +90,16 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 		// data := map[string]interface{}{"Image": str, "Summary" results.Summary, "Accuracy", results.Accuracy}
 		data := EndResult{str, results.Summary, fmt.Sprintf("%.2f", results.Accuracy * 100)}
 
+
 		log.Println(data.Summary)
 		log.Println(data.Image)
-		if err = tmpl.ExecuteTemplate(w, "body", data); err != nil {
+        // if err = tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
+        //     log.Println(err.Error())
+        //     log.Println("unable to execute layout template.")
+        // }
+		if err = tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 			log.Println(err.Error())
-			log.Println("unable to execute template.")
+			log.Println("unable to execute body template.")
 		}
 	}
 }
