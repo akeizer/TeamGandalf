@@ -1,13 +1,31 @@
 {{define "body"}}
 <div>
+  <span>
+    Test Image:
     <img src="data:image/png;base64,{{.Image}}">
-    <div>
-      <p>
-        Summary: <span>{{.Summary}}</span>
-      </p>
-      <p>
-        Accuracy: <span>{{.Accuracy}}%</span>
-      </p>
-    </div>
+  </span>
+  <div>
+    <table class="table">
+    <thead>
+      <tr>
+        {{range .Headers}}
+          <th>{{.}}</th>
+        {{end}}
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Data}}
+      <tr>
+        {{range .}}
+          <td>{{.}}</td>
+        {{end}}
+      </tr>
+      {{end}}
+    </tbody>
+    </table>
+    <p>
+      Accuracy: <span>{{.Accuracy}}%</span>
+    </p>
+  </div>
 </div>
 {{end}}
